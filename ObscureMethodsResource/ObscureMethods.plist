@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>ObscureMethodsPrefix</key>
+	<false/>
+	<key>PrefixString</key>
+	<string>Obscure</string>
+	<key>FilterMethods</key>
+	<array>
+		<string>applicationWillTerminate</string>
+		<string>applicationDidBecomeActive</string>
+		<string>applicationDidEnterBackground</string>
+		<string>applicationWillEnterForeground</string>
+		<string>applicationWillResignActive</string>
+		<string>didFinishLaunchingWithOptions</string>
+		<string>didReceiveMemoryWarning</string>
+		<string>viewDidLoad</string>
+		<string>tableView</string>
+	</array>
+</dict>
+</plist>
