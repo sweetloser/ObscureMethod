@@ -2,21 +2,48 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>ObscureMethodsPrefix</key>
-	<false/>
-	<key>PrefixString</key>
-	<string>Obscure</string>
 	<key>FilterMethods</key>
 	<array>
-		<string>applicationWillTerminate</string>
+		<string>application</string>
 		<string>applicationDidBecomeActive</string>
 		<string>applicationDidEnterBackground</string>
 		<string>applicationWillEnterForeground</string>
 		<string>applicationWillResignActive</string>
+		<string>applicationWillTerminate</string>
+		<string>canEditRowAtIndexPath</string>
+		<string>canMoveRowAtIndexPath</string>
+		<string>canPerformAction</string>
+		<string>cellForItemAtIndexPath</string>
+		<string>cellForRowAtIndexPath</string>
+		<string>collectionView</string>
+		<string>commitEditingStyle</string>
 		<string>didFinishLaunchingWithOptions</string>
 		<string>didReceiveMemoryWarning</string>
-		<string>viewDidLoad</string>
+		<string>drawRect</string>
+		<string>forItemAtIndexPath</string>
+		<string>forRowAtIndexPath</string>
+		<string>init</string>
+		<string>initWithCoder</string>
+		<string>initWithFrame</string>
+		<string>moveRowAtIndexPath</string>
+		<string>numberOfItemsInSection</string>
+		<string>numberOfRowsInSection</string>
+		<string>numberOfSectionsInCollectionView</string>
+		<string>numberOfSectionsInTableView</string>
+		<string>performAction</string>
+		<string>prepareForSegue</string>
+		<string>sender</string>
+		<string>shouldHighlightItemAtIndexPath</string>
+		<string>shouldSelectItemAtIndexPath</string>
+		<string>shouldShowMenuForItemAtIndexPath</string>
 		<string>tableView</string>
+		<string>toIndexPath</string>
+		<string>viewDidLoad</string>
+		<string>withSender</string>
 	</array>
+	<key>ObscureMethodsPrefix</key>
+	<false/>
+	<key>PrefixString</key>
+	<string>Obscure</string>
 </dict>
 </plist>
