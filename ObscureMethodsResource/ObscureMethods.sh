@@ -63,7 +63,7 @@ function generateMethodNameFile(){
 
 #用openssl生成足够长的随机字符串
 function generateRandString(){
-	openssl rand -base64 256 | tr -c -d "a-zA-Z" #| head -c 16
+	openssl rand -base64 256 | tr -c -d "a-zA-Z" | head -c 24
 }
 
 #生成头文件
