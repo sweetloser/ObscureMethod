@@ -1,7 +1,11 @@
 #!/bin/sh
 
 
-ConfigurationFilePath="./ObscureMethods.plist"
+#获取脚本当前路径
+shellPath=`dirname $0`
+
+#获取配置文件(ObscureMethods.plist)的绝对路径
+ConfigurationFilePath="${shellPath}/ObscureMethods.plist"
 
 
 #获取类名（规范方法名：-(void)func:(int)s char:(char)c;）
@@ -13,19 +17,28 @@ function generateMethodNameFile(){
 	inputDir=$1
 	methodNameFile=$2
 
-	ObscureMethodsPrefix=`/usr/libexec/PlistBuddy -c "print:ObscureMethodsPrefix" "${ConfigurationFilePath}"`
+	ObscureMethodsPrefix=`/usr/libexec/PlistBuddy -c "print :ObscureMethodsPrefix" "${ConfigurationFilePath}"`
+
 	if [[ "${ObscureMethodsPrefix}" == true ]]; then
 
-		#获取plist文件中定义的方法名前缀
-		PrefixString=`/usr/libexec/PlistBuddy -c "print:PrefixString" "${ConfigurationFilePath}"`
+		echo "有前缀设置"
 
+		#获取plist文件中定义的方法名前缀
+		PrefixString=`/usr/libexec/PlistBuddy -c "print :PrefixString" "${ConfigurationFilePath}"`
+
+		echo "方法名前缀为：${PrefixString}"
 		#带前缀方法名过滤
 		grep -h -r "^[+-]" $inputDir --include "*.[mh]" | sed "/([ ]*IBAction[ ]*)/d" | sed "s/[+-]//g" | sed "s/([^)]*)//g" | sed "s/[:,;{}]/ /g" | sed -n "/[ ]*${PrefixString}/p" | awk '{for(a=1;a<=NF;a++) if(a%2 == 1) print $a}' | sort | uniq >$methodNameFile
 	
 	else
+
+		echo "没有前缀设置"
 		
-		allMethodNameTmpFile="./allMethodNameTmpFile"
-		filterMethodTmpFile="./filterMethodTmpFile"
+		#获取所有方法的tmp文件
+		allMethodNameTmpFile="${shellPath}/allMethodNameTmpFile"
+
+		#过滤方法的tmp文件
+		filterMethodTmpFile="${shellPath}/filterMethodTmpFile"
 
 		rm -rf "${allMethodNameTmpFile}" || true
 		touch "${allMethodNameTmpFile}"
@@ -37,8 +50,10 @@ function generateMethodNameFile(){
 
 
 		#没有设置方法名前缀过滤，则用`FilterMethods`数组过滤(默认过滤部分系统函数)
-		/usr/libexec/PlistBuddy -c "print:FilterMethods" "${ConfigurationFilePath}" | sed -e '1d' -e '$d' | sed 's/ //g' | sort | uniq > $filterMethodTmpFile
 
+		/usr/libexec/PlistBuddy -c "print :FilterMethods" "${ConfigurationFilePath}" | sed -e '1d' -e '$d' | sed 's/ //g' | sort | uniq > $filterMethodTmpFile
+
+		#在中`allMethodNameTmpFile` 过滤 配置文件中设置的方法
 		comm -23 "${allMethodNameTmpFile}" "${filterMethodTmpFile}" | sort | uniq > ${methodNameFile}
 
 		rm -rf "${allMethodNameTmpFile}"
@@ -159,7 +174,6 @@ fi
 if [[ ! -f "ObscureMethodsPath" ]]; then
 	touch "${ObscureMethodsPath}"
 fi
-
 
 start "${rootdirPath}" "${funclistPath}" "${ObscureMethodsPath}"
 

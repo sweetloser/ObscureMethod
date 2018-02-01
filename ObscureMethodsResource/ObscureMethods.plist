@@ -44,6 +44,6 @@
 	<key>ObscureMethodsPrefix</key>
 	<false/>
 	<key>PrefixString</key>
-	<string>Obscure</string>
+	<string>init</string>
 </dict>
 </plist>
