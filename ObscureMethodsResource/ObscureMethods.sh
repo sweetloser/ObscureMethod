@@ -10,16 +10,17 @@ ConfigurationFilePath="${shellPath}/ObscureMethods.plist"
 
 #获取类名（规范方法名：-(void)func:(int)s char:(char)c;）
 
-function generateMethodNameFile(){
+function generateMethodNameFile()
+{
 
 	#遍历工程目录下所有的文件，找出.m和.h文件中的方法名，并重定向到文件中
 
 	inputDir=$1
 	methodNameFile=$2
 
-	ObscureMethodsPrefix=`/usr/libexec/PlistBuddy -c "print :ObscureMethodsPrefix" "${ConfigurationFilePath}"`
-
-	if [[ "${ObscureMethodsPrefix}" == true ]]; then
+	ObscureMethodsType=`/usr/libexec/PlistBuddy -c "print :ObscureMethodsType" "${ConfigurationFilePath}"`
+	# ==== > 1.前缀匹配		2.文件夹筛选		3.方法排除		其他：error
+	if [[ "${ObscureMethodsType}" == 1 ]]; then
 
 		echo "有前缀设置"
 
@@ -30,7 +31,22 @@ function generateMethodNameFile(){
 		#带前缀方法名过滤
 		grep -h -r "^[+-]" $inputDir --include "*.[mh]" | sed "/([ ]*IBAction[ ]*)/d" | sed "s/[+-]//g" | sed "s/([^)]*)//g" | sed "s/[:,;{}]/ /g" | sed -n "/[ ]*${PrefixString}/p" | awk '{for(a=1;a<=NF;a++) if(a%2 == 1) print $a}' | sort | uniq >$methodNameFile
 	
-	else
+	elif [[ "${ObscureMethodsType}" == 2 ]]; then
+		
+		echo "文件夹筛选"
+		# grep -H -r $inputDir --include "*.[mh]"  >$methodNameFile
+		FilterDir=`/usr/libexec/PlistBuddy -c "print :FilterDirName" "${ConfigurationFilePath}"`
+
+		echo "${FilterDir}"
+
+		#过来文件夹
+		grep -H -r "^[+-]" $inputDir --include "*.[mh]" | sed "/\/${FilterDir}\//d" | sed "/([ ]*IBAction[ ]*)/d" | sed "s/([^)]*)//g" | sed "s/[:,;{}]/ /g" | sed "s/[+-]//g" | awk '{for(a=1;a<=NF;a++) if(a%2 == 0) print $a}' | sort | uniq >$methodNameFile
+
+
+	elif [[ "${ObscureMethodsType}" == 3 ]]; then
+		
+		echo "方法排除"
+
 
 		echo "没有前缀设置"
 		
@@ -58,7 +74,18 @@ function generateMethodNameFile(){
 
 		rm -rf "${allMethodNameTmpFile}"
 		rm -rf "${filterMethodTmpFile}"
+
+	else
+		echo "ERROR"
+		echo "请在plist配置文件中键入正确的筛选方式！\n"
+		echo "key:ObscureMethodsType"
+		echo "value（Number）:"
+		echo "		1=====>方法名前缀筛选"
+		echo "		2=====>文件夹筛选（指定文件夹不混淆）"
+		echo "		3=====>特定方法名不混淆"
+		echo "		其他==>错误"
 	fi
+
 }
 
 #用openssl生成足够长的随机字符串
@@ -135,16 +162,16 @@ fi
 
 
 if [[ $# == 0 ]]; then
-	echo "args:0"
+	echo "argc:0"
 elif [[ $# == 1 ]]; then
-	echo "args:1"
+	echo "argc:1"
 	rootdirPath=$1
 elif [[ $# == 2 ]]; then
-	echo "args:2"
+	echo "argc:2"
 	rootdirPath=$1
 	funclistPath=$2
 elif [[ $# == 3 ]]; then
-	echo "args:3"
+	echo "argc:3"
 	rootdirPath=$1
 	funclistPath=$2
 	ObscureMethodsPath=$3
