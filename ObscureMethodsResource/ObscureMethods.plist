@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>FilterDirName</key>
+	<string>Tast_Manager</string>
 	<key>FilterMethods</key>
 	<array>
 		<string>application</string>
@@ -41,8 +43,8 @@
 		<string>viewDidLoad</string>
 		<string>withSender</string>
 	</array>
-	<key>ObscureMethodsPrefix</key>
-	<false/>
+	<key>ObscureMethodsType</key>
+	<integer>11</integer>
 	<key>PrefixString</key>
 	<string>init</string>
 </dict>
