@@ -29,7 +29,7 @@ function generateMethodNameFile()
 
 		echo "方法名前缀为：${PrefixString}"
 		#带前缀方法名过滤
-		grep -h -r "^[+-]" $inputDir --include "*.[mh]" | sed "/([ ]*IBAction[ ]*)/d" | sed "/([ ]*^[ ]*)/d" | sed "s/[+-]//g" | sed "s/([^)]*)//g" | sed "s/[:,;{}]/ /g" | sed -n "/[ ]*${PrefixString}/p" | awk '{for(a=1;a<=NF;a++) if(a%2 == 1) print $a}' | sort | uniq >$methodNameFile
+		grep -h -r "^[+-]" $inputDir --include "*.[mh]" | sed "/([ ]*IBAction[ ]*)/d" | sed "/(*^.*)/d" | sed "s/[ ]*{//g" | sed "s/[+-]//g" | sed "s/([^)]*)//g" | sed "s/;.*//g" | sed "s/[:,;{}]/ /g" | sed -n "/[ ]*${PrefixString}/p" | awk '{for(a=1;a<=NF;a++) if(a%2 == 1) print $a}' | sort | uniq >$methodNameFile
 	
 	elif [[ "${ObscureMethodsType}" == 2 ]]; then
 		
@@ -40,7 +40,7 @@ function generateMethodNameFile()
 		echo "${FilterDir}"
 
 		#过来文件夹
-		grep -H -r "^[+-]" $inputDir --include "*.[mh]" | sed "/\/${FilterDir}\//d" | sed "/([ ]*IBAction[ ]*)/d" | sed "/([ ]*^[ ]*)/d" | sed "s/([^)]*)//g" | sed "s/[:,;{}]/ /g" | sed "s/[+-]//g" | awk '{for(a=1;a<=NF;a++) if(a%2 == 0) print $a}' | sort | uniq >$methodNameFile
+		grep -H -r "^[+-]" $inputDir --include "*.[mh]" | sed "/\/${FilterDir}\//d" | sed "/([ ]*IBAction[ ]*)/d" | sed "/(*^.*)/d" | sed "s/[ ]*{//g" | sed "s/;.*//g" | sed "s/([^)]*)//g" | sed "s/[:,;{}]/ /g" | sed "s/[+-]//g" | awk '{for(a=1;a<=NF;a++) if(a%2 == 0) print $a}' | sort | uniq >$methodNameFile
 
 
 	elif [[ "${ObscureMethodsType}" == 3 ]]; then
@@ -62,9 +62,9 @@ function generateMethodNameFile()
 		rm -rf "${filterMethodTmpFile}" || true
 		touch "${filterMethodTmpFile}"
 
-		grep -h -r "^[+-]" $inputDir --include "*.[mh]" | sed "/([ ]*IBAction[ ]*)/d" | sed "/([ ]*^[ ]*)/d" | sed "s/[+-]//g" | sed "s/([^)]*)//g" | sed "s/[:,;{}]/ /g" | awk '{for(a=1;a<=NF;a++) if(a%2 == 1) print $a}' | sort | uniq >$allMethodNameTmpFile
 
-
+		#			目标文件筛选.[mh] | 筛选【+-】开头的行	| 去除  【IBAction】 的行  	  |删除参数或者返回值带block的行|删除【;】后的所有字符|删除【{】和之前的空格|删除字符【+-】   | 删除(*)字符			|【:,;{}】==> [ ]	  | 通过【 】分割字符串，取到方法名						 | 排序  | 去重 > 重定向到文件
+		grep -h -r "^[+-]" $inputDir --include "*.[mh]" | sed "/([ ]*IBAction[ ]*)/d" | sed "/(*^.*)/d" | sed "s/;.*//g" | sed "s/[ ]*{//g"| sed "s/[+-]//g" | sed "s/([^)]*)//g" | sed "s/[:,;{}]/ /g" | tr -d "\r" | awk '{for(a=1;a<=NF;a++) if(a%2 == 1) print $a}' | sort | uniq > allMethodNameTmpFile
 		#没有设置方法名前缀过滤，则用`FilterMethods`数组过滤(默认过滤部分系统函数)
 
 		/usr/libexec/PlistBuddy -c "print :FilterMethods" "${ConfigurationFilePath}" | sed -e '1d' -e '$d' | sed 's/ //g' | sort | uniq > $filterMethodTmpFile
@@ -117,7 +117,7 @@ function generateHeaderFile(){
 	echo "#define ${nameWithouth}_h" >>${headerFile}
 
 	cat ${methodlistfile} | while read line 
-	do     
+	do
 		randstr=`generateRandString`
 
 		if [[ "${SRCROOT}" ]]; then

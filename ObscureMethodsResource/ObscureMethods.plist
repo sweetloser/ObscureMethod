@@ -44,7 +44,7 @@
 		<string>withSender</string>
 	</array>
 	<key>ObscureMethodsType</key>
-	<integer>11</integer>
+	<integer>3</integer>
 	<key>PrefixString</key>
 	<string>init</string>
 </dict>
