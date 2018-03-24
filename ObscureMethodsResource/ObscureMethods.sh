@@ -29,7 +29,7 @@ function generateMethodNameFile()
 
 		echo "方法名前缀为：${PrefixString}"
 		#带前缀方法名过滤
-		grep -h -r "^[+-]" $inputDir --include "*.[mh]" | sed "/([ ]*IBAction[ ]*)/d" | sed "s/[+-]//g" | sed "s/([^)]*)//g" | sed "s/[:,;{}]/ /g" | sed -n "/[ ]*${PrefixString}/p" | awk '{for(a=1;a<=NF;a++) if(a%2 == 1) print $a}' | sort | uniq >$methodNameFile
+		grep -h -r "^[+-]" $inputDir --include "*.[mh]" | sed "/([ ]*IBAction[ ]*)/d" | sed "/([ ]*^[ ]*)/d" | sed "s/[+-]//g" | sed "s/([^)]*)//g" | sed "s/[:,;{}]/ /g" | sed -n "/[ ]*${PrefixString}/p" | awk '{for(a=1;a<=NF;a++) if(a%2 == 1) print $a}' | sort | uniq >$methodNameFile
 	
 	elif [[ "${ObscureMethodsType}" == 2 ]]; then
 		
@@ -40,7 +40,7 @@ function generateMethodNameFile()
 		echo "${FilterDir}"
 
 		#过来文件夹
-		grep -H -r "^[+-]" $inputDir --include "*.[mh]" | sed "/\/${FilterDir}\//d" | sed "/([ ]*IBAction[ ]*)/d" | sed "s/([^)]*)//g" | sed "s/[:,;{}]/ /g" | sed "s/[+-]//g" | awk '{for(a=1;a<=NF;a++) if(a%2 == 0) print $a}' | sort | uniq >$methodNameFile
+		grep -H -r "^[+-]" $inputDir --include "*.[mh]" | sed "/\/${FilterDir}\//d" | sed "/([ ]*IBAction[ ]*)/d" | sed "/([ ]*^[ ]*)/d" | sed "s/([^)]*)//g" | sed "s/[:,;{}]/ /g" | sed "s/[+-]//g" | awk '{for(a=1;a<=NF;a++) if(a%2 == 0) print $a}' | sort | uniq >$methodNameFile
 
 
 	elif [[ "${ObscureMethodsType}" == 3 ]]; then
@@ -62,7 +62,7 @@ function generateMethodNameFile()
 		rm -rf "${filterMethodTmpFile}" || true
 		touch "${filterMethodTmpFile}"
 
-		grep -h -r "^[+-]" $inputDir --include "*.[mh]" | sed "/([ ]*IBAction[ ]*)/d" | sed "s/[+-]//g" | sed "s/([^)]*)//g" | sed "s/[:,;{}]/ /g" | awk '{for(a=1;a<=NF;a++) if(a%2 == 1) print $a}' | sort | uniq >$allMethodNameTmpFile
+		grep -h -r "^[+-]" $inputDir --include "*.[mh]" | sed "/([ ]*IBAction[ ]*)/d" | sed "/([ ]*^[ ]*)/d" | sed "s/[+-]//g" | sed "s/([^)]*)//g" | sed "s/[:,;{}]/ /g" | awk '{for(a=1;a<=NF;a++) if(a%2 == 1) print $a}' | sort | uniq >$allMethodNameTmpFile
 
 
 		#没有设置方法名前缀过滤，则用`FilterMethods`数组过滤(默认过滤部分系统函数)
