@@ -86,6 +86,9 @@ function generateMethodNameFile()
 		echo "		其他==>错误"
 	fi
 
+	#筛选类名
+	grep -h -r "^@implementation" $inputDir --include "*.[m]" | sed "s/[<:>()]/ /g" | sed "s/@implementation//g" | awk '{for(a=1;a<=NF;a++) if(a==1) print $a}' | sort | uniq >> $methodNameFile
+	
 }
 
 #用openssl生成足够长的随机字符串
